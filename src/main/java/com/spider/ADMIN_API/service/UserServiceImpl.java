@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import com.spider.ADMIN_API.bindings.DashboardCard;
 import com.spider.ADMIN_API.bindings.LoginForm;
 import com.spider.ADMIN_API.bindings.UserAccForm;
+import com.spider.ADMIN_API.constatnts.AppConstatnts;
 import com.spider.ADMIN_API.entities.EligEntity;
 import com.spider.ADMIN_API.entities.UserEntity;
 import com.spider.ADMIN_API.repositires.EligRepo;
@@ -42,12 +43,12 @@ public class UserServiceImpl implements UserService {
 	UserEntity entity =	userRepo.findByEmailAndPwd(loginform.getEmail(), loginform.getPwd());
 		
 	if(entity==null) {
-		return "Invalid Credentials ";
+		return AppConstatnts.INVALID_CRED;
 	}
-	if ("Y".equals(entity.getActiveSw()) && "Unlocked".equals(entity.getAccStatus())) {
-		return "Success";
+	if (AppConstatnts.Y_STR.equals(entity.getActiveSw()) && AppConstatnts.UNLOCKED.equals(entity.getAccStatus())) {
+		return AppConstatnts.SUCCESS;
 	}else {
-		return "Account Locked/In-Active";
+		return AppConstatnts.ACC_LOCKED;
 	}
 }
 
@@ -58,8 +59,8 @@ public class UserServiceImpl implements UserService {
 	 if (null == userEntity) {
 		return false;
 	}else {
-		String subject="Recover Pwd";
-		String body=readEmailBody("Forgot_PWD_EMAIL_BODY.txt", userEntity);
+		String subject=AppConstatnts.RECOVER_SUB;
+		String body=readEmailBody(AppConstatnts.PWD_BODY_FILE, userEntity);
 		return  emailUtils.sendEmail(subject, body, email);
 	}
 	
@@ -73,10 +74,10 @@ public class UserServiceImpl implements UserService {
 	List<EligEntity> eligList = eligRepo.findAll();
 	
 	long approvedCnt = eligList.stream().filter(ed -> ed
-			                            .getPlanStatus().equals("AP")).count();
+			                            .getPlanStatus().equals(AppConstatnts.AP)).count();
 	
 	long deniedCnt = eligList.stream().filter(ed ->ed
-			                          .getPlanStatus().equals("DN")).count();
+			                          .getPlanStatus().equals(AppConstatnts.DN)).count();
 	
     Double total=eligList.stream().mapToDouble(ed -> ed
     		                      .getBenifitAmt()).sum();
@@ -103,9 +104,9 @@ public class UserServiceImpl implements UserService {
 		StringBuilder sb = new StringBuilder();
 		try (Stream<String> lines = Files.lines(Paths.get(filename))) {
 			lines.forEach(line -> {
-				line = line.replace("${FNAME}", user.getFullName());
-				line = line.replace("${PWD}", user.getPwd());
-				line = line.replace("${EMAIL}", user.getEmail());
+				line = line.replace(AppConstatnts.FNAME, user.getFullName());
+				line = line.replace(AppConstatnts.PWD, user.getPwd());
+				line = line.replace(AppConstatnts.EMAIL, user.getEmail());
 				sb.append(line);
 			});
 		} catch (Exception e) {
