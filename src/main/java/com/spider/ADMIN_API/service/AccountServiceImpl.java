@@ -1,9 +1,12 @@
 package com.spider.ADMIN_API.service;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +39,9 @@ public class AccountServiceImpl implements AccountService {
 		entity.setActiveSw("Y");
 		userRepo.save(entity);
 		
-		String subject="";
-		String body="";
-	return 	emailUtils.sendEmail(subject, body, accForm.getEmail());
+		String subject="User Registrartion";
+		String body=readEmailBody("Reg_EMAIL_BODY.txt",entity);
+		return 	emailUtils.sendEmail(subject, body, accForm.getEmail());
 	
 	
 		}
@@ -128,6 +131,21 @@ public class AccountServiceImpl implements AccountService {
 
 	     return sb.toString();
 	}
+	private String readEmailBody(String filename, UserEntity user) {
+		StringBuilder sb = new StringBuilder();
+		try (Stream<String> lines = Files.lines(Paths.get(filename))) {
+			lines.forEach(line -> {
+				line = line.replace("${FNAME}", user.getFullName());
+				line = line.replace("${TEMP_PWD}", user.getPwd());
+				line = line.replace("${EMAIL}", user.getEmail());
+				sb.append(line);
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
+	}
 
+	
 	
 }

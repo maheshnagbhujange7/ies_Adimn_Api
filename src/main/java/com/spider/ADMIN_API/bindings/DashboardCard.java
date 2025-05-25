@@ -7,6 +7,7 @@ public class DashboardCard {
 	private Long approvedCnt;
 	private Long deniedCnt;
 	private Double beniftAmtGiven;
+	private UserAccForm user;
 	
 	public Long getPlansCnt() {
 		return plansCnt;
@@ -31,6 +32,14 @@ public class DashboardCard {
 	}
 	public void setBeniftAmtGiven(Double beniftAmtGiven) {
 		this.beniftAmtGiven = beniftAmtGiven;
+	}
+	public UserAccForm getUser() {
+		return user;
+	}
+	public void setUser(UserAccForm user) {
+		this.user = user;
 	}	
+	
+	
 	
 }
